@@ -146,6 +146,8 @@ module cpu(
 	 */
 	wire [31:0]		wb_mux_out;
 	wire [31:0]		reg_dat_mux_out;
+	
+	wire [31:0]		mem_regwb_mux_out;
 
 	/*
 	 *	Forwarding multiplexer wires
@@ -493,7 +495,7 @@ module cpu(
 			.out(pc_mux0)
 		);
 
-	wire[31:0] mem_regwb_mux_out; //TODO copy of wb_mux but in mem stage, move back and cleanup
+	//wire[31:0] mem_regwb_mux_out; //TODO copy of wb_mux but in mem stage, move back and cleanup
 	//A copy of the writeback mux, but in MEM stage //TODO move back and cleanup
 	mux2to1 mem_regwb_mux(
 			.input0(mem_csrr_mux_out),
