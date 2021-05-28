@@ -46,10 +46,10 @@ module dsp_add_sub(input1, input2, sub, out);
 	reg CONST_0 = 1'b0;
 
 	SB_MAC16 i_sbmac16(
-		.A(input1[15:0]),
-		.B(input1[31:16]),
-		.C(input2[15:0]),
-		.D(input2[31:16]),
+		.A(input1[31:16]),
+		.B(input1[15:0]),
+		.C(input2[31:16]),
+		.D(input2[15:0]),
 		.O(out),
 
 		// the adder is asynchronous so the clock doesn't matter
