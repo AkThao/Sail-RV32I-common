@@ -33,9 +33,6 @@
 	ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-
-
-
 `include "sail-core/include/rv32i-defines.v"
 `include "sail-core/include/sail-core-defines.v"
 
@@ -61,10 +58,10 @@ module alu(ALUctl, A, B, ALUOut, Branch_Enable);
 	output reg [31:0]	ALUOut;
 	output reg		Branch_Enable;
 
-	reg [31:0] add_out;
-	reg [31:0] sub_out;
-	dsp_add_sub adder(A, B, 1'b0, add_out);
-	dsp_add_sub subber(A, B, 1'b1, sub_out);
+	wire [31:0] add_sub_out;
+
+	// ALUctl[2] is 0 on ADD, 1 on SUB, we don't care about the adder behaviour on other instructions
+	dsp_add_sub Add_Sub(A, B, ALUctl[2], add_sub_out);
 
 	/*
 	 *	This uses Yosys's support for nonzero initial values:
@@ -80,7 +77,7 @@ module alu(ALUctl, A, B, ALUOut, Branch_Enable);
 		Branch_Enable = 1'b0;
 	end
 
-	always @(ALUctl, A, B) begin
+	always @(ALUctl, A, B ,add_sub_out) begin
 		case (ALUctl[3:0])
 			/*
 			 *	AND (the fields also match ANDI and LUI)
@@ -95,17 +92,12 @@ module alu(ALUctl, A, B, ALUOut, Branch_Enable);
 			/*
 			 *	ADD (the fields also match AUIPC, all loads, all stores, and ADDI)
 			 */
-			`kSAIL_MICROARCHITECTURE_ALUCTL_3to0_ADD:	begin
-				ALUOut = add_out;
-			end
+			`kSAIL_MICROARCHITECTURE_ALUCTL_3to0_ADD:	ALUOut = add_sub_out;
 
 			/*
 			 *	SUBTRACT (the fields also matches all branches)
 			 */
-			`kSAIL_MICROARCHITECTURE_ALUCTL_3to0_SUB:	begin
-				ALUOut = sub_out;
-			end
-
+			`kSAIL_MICROARCHITECTURE_ALUCTL_3to0_SUB:	ALUOut = add_sub_out;
 			/*
 			 *	SLT (the fields also matches all the other SLT variants)
 			 */
