@@ -50,5 +50,5 @@ module adder(input1, input2, out);
 	input [31:0]	input2;
 	output [31:0]	out;
  
-	dsp_add_sub dsp_adder(input1, input2, 1'b0, out);
+	dsp_adder dsp_add(input1, input2, out);
 endmodule

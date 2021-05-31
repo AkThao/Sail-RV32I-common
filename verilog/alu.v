@@ -59,11 +59,10 @@ module alu(ALUctl, A, B, ALUOut, Branch_Enable);
 	output reg		Branch_Enable;
 
 	wire [31:0] add_sub_out;
-	wire [31:0] a_b_cmp;
+	wire oflow;
 
-	// ALUctl[2] is 0 on ADD, 1 on SUB, we don't care about the adder behaviour on other instructions
-	dsp_add_sub Add_Sub(A, B, ALUctl[2], add_sub_out);
-	dsp_add_sub A_B_Comparator(A, B, 1'b1, a_b_cmp);
+	// ALUctl[2] is 0 on ADD, 1 on SUB, SLTs and all branches, we don't care about the adder behaviour on other instructions
+	dsp_add_sub Add_Sub(A, B, ALUctl[2], add_sub_out, oflow);
 	/*
 	 *	This uses Yosys's support for nonzero initial values:
 	 *
@@ -78,7 +77,7 @@ module alu(ALUctl, A, B, ALUOut, Branch_Enable);
 		Branch_Enable = 1'b0;
 	end
 
-	always @(ALUctl, A, B) begin
+	always @(ALUctl, A, B, add_sub_out, oflow) begin
 		case (ALUctl[3:0])
 			/*
 			 *	AND (the fields also match ANDI and LUI)
@@ -102,8 +101,7 @@ module alu(ALUctl, A, B, ALUOut, Branch_Enable);
 			/*
 			 *	SLT (the fields also matches all the other SLT variants)
 			 */
-			`kSAIL_MICROARCHITECTURE_ALUCTL_3to0_SLT:	ALUOut = a_b_cmp[31] ? 32'b1 : 32'b0; //$signed(A) < $signed(B) ? 32'b1 : 32'b0;
-
+			`kSAIL_MICROARCHITECTURE_ALUCTL_3to0_SLT: ALUOut = add_sub_out[31] == oflow ? 32'b0 : 32'b1; // ALUOut = $signed(A) < $signed(B) ? 32'b1 : 32'b0;
 			/*
 			 *	SRL (the fields also matches the other SRL variants)
 			 */
@@ -146,12 +144,14 @@ module alu(ALUctl, A, B, ALUOut, Branch_Enable);
 		endcase
 	end
 
-	always @(ALUctl, ALUOut, A, B) begin
+	always @(ALUctl, ALUOut, A, B, add_sub_out, oflow) begin
 		case (ALUctl[6:4])
 			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BEQ:	Branch_Enable = (ALUOut == 0);
 			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BNE:	Branch_Enable = !(ALUOut == 0);
-			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BLT:	Branch_Enable = a_b_cmp[31];//($signed(A) < $signed(B));
-			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BGE:	Branch_Enable = ~a_b_cmp[31]; //($signed(A) >= $signed(B));
+			// all branches make the DSP block a subtractor
+			// arithmetic overflow inverts the result of the comparison e.g. 127 - (-1) = -128 < 0 -> -1 > 127
+			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BLT:	Branch_Enable = oflow ? ~add_sub_out[31] : add_sub_out[31];
+			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BGE:	Branch_Enable = oflow ? add_sub_out[31] : ~add_sub_out[31];
 			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BLTU:	Branch_Enable = ($unsigned(A) < $unsigned(B));
 			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BGEU:	Branch_Enable = ($unsigned(A) >= $unsigned(B));
 
