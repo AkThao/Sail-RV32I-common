@@ -101,7 +101,7 @@ module alu(ALUctl, A, B, ALUOut, Branch_Enable);
 			/*
 			 *	SLT (the fields also matches all the other SLT variants)
 			 */
-			`kSAIL_MICROARCHITECTURE_ALUCTL_3to0_SLT: ALUOut = add_sub_out[31] == oflow ? 32'b0 : 32'b1; // ALUOut = $signed(A) < $signed(B) ? 32'b1 : 32'b0;
+			`kSAIL_MICROARCHITECTURE_ALUCTL_3to0_SLT: ALUOut = $signed(A) < $signed(B) ? 32'b1 : 32'b0;
 			/*
 			 *	SRL (the fields also matches the other SRL variants)
 			 */
@@ -149,9 +149,9 @@ module alu(ALUctl, A, B, ALUOut, Branch_Enable);
 			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BEQ:	Branch_Enable = (ALUOut == 0);
 			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BNE:	Branch_Enable = !(ALUOut == 0);
 			// all branches make the DSP block a subtractor
-			// arithmetic overflow inverts the result of the comparison e.g. 127 - (-1) = -128 < 0 -> -1 > 127
-			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BLT:	Branch_Enable = oflow ? ~add_sub_out[31] : add_sub_out[31];
-			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BGE:	Branch_Enable = oflow ? add_sub_out[31] : ~add_sub_out[31];
+			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BLT:	Branch_Enable = ($signed(A) < $signed(B));
+			// the logic here just happens to be faster than an inferred signed >=
+			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BGE:	Branch_Enable = !((add_sub_out[31] && (A[31] || !B[31])) || (A[31] && !B[31])); //($signed(A) >= $signed(B));
 			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BLTU:	Branch_Enable = ($unsigned(A) < $unsigned(B));
 			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BGEU:	Branch_Enable = ($unsigned(A) >= $unsigned(B));
 
