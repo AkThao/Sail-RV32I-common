@@ -82,7 +82,7 @@ module cpu(
 	wire [31:0]		pc_out;
 	wire			pcsrc;
 	wire [31:0]		inst_mux_out;
-	wire [31:0]		fence_mux_out;
+//	wire [31:0]		fence_mux_out;
 
 	/*
 	 *	Pipeline Registers
