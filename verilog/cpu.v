@@ -257,7 +257,7 @@ module cpu(
 		);
 
 	imm_gen immediate_generator(
-			.inst(if_id_out[63:32]),
+			.inst(if_id_out[63:34]),
 			.imm(imm_out)
 		);
 
