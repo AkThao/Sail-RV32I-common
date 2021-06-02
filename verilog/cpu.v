@@ -120,7 +120,7 @@ module cpu(
 //	wire [31:0]		RegB_mux_out;
 //	wire [31:0]		RegA_AddrFwdFlush_mux_out;
 //	wire [31:0]		RegB_AddrFwdFlush_mux_out;
-	wire [31:0]		rdValOut_CSR;
+//	wire [31:0]		rdValOut_CSR;
 	wire [3:0]		dataMem_sign_mask;
 
 	/*
@@ -232,7 +232,7 @@ module cpu(
 			.Jump(Jump1),
 			.Jalr(Jalr1),
 			.Lui(Lui1),
-			.Auipc(Auipc1),
+			.Auipc(Auipc1)
 //			.Fence(Fence_signal),
 //			.CSRR(CSRR_signal)
 		);
