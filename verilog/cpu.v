@@ -82,7 +82,7 @@ module cpu(
 	wire [31:0]		pc_out;
 	wire			pcsrc;
 	wire [31:0]		inst_mux_out;
-	wire [31:0]		fence_mux_out;
+//	wire [31:0]		fence_mux_out;
 
 	/*
 	 *	Pipeline Registers
@@ -257,7 +257,7 @@ module cpu(
 		);
 
 	imm_gen immediate_generator(
-			.inst(if_id_out[63:32]),
+			.inst(if_id_out[63:34]),
 			.imm(imm_out)
 		);
 
