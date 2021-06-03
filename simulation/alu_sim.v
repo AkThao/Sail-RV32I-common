@@ -63,23 +63,56 @@ initial begin
 
  	//simulate ADD instruction
  	A = 32'd10000;
- 	B = 32'd0111;
+ 	B = 32'd01122;
  	FuncCode = 4'b0000;
  	Opcode = 7'b0110011;
 
  	#5
 
  	//simulate SUB instruction
- 	A = 32'd10000;
- 	B = 32'd0111;
- 	FuncCode = 4'b1000;
- 	Opcode = 7'b0110011;
+ 	A = 32'd10;
+ 	B = 32'd7;
+ 	FuncCode = 4'b0010; //FuncCode = 4'b1000;
+ 	Opcode = 7'b0110011; //Opcode = 7'b0110011;
 
  	#5
 
+	A = 32'd1;
+	B = 32'd2;
+
+	#5
+
+	A = 32'hFFFFFFFE;
+	B = 32'hFFFFFFFF;
+
+	#5
+
+	A = 32'hFFFFFFFF;
+	B = 32'hFFFFFFFE;
+
+	#5
+
+	A = 32'h7FFFFFFF;
+	B = 32'hFFFFFFFF;
+
+	#5
+
+	A = 32'h1;
+	B = 32'hFFFFFFFF;
+
+	#5
+
+	A = 32'h80000000;
+	B = 32'h1;
+
+	#5
+
+	A = 32'hFFFFFFFF;
+	B = 32'h1;
+
  	//simulate SLT instuction
- 	A = 32'b0;
- 	B = 32'b10;
+ 	A = 32'hFFFFFFFF;
+ 	B = 32'h4FFFFFFF;
  	FuncCode = 4'b0010;
  	Opcode = 7'b0110011;
 
