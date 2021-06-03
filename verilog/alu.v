@@ -125,17 +125,17 @@ module alu(ALUctl, A, B, ALUOut, Branch_Enable);
 			/*
 			 *	CSRRW  only
 			 */
-//			`kSAIL_MICROARCHITECTURE_ALUCTL_3to0_CSRRW:	ALUOut = A;
+			`kSAIL_MICROARCHITECTURE_ALUCTL_3to0_CSRRW:	ALUOut = A;
 
 			/*
 			 *	CSRRS only
 			 */
-//			`kSAIL_MICROARCHITECTURE_ALUCTL_3to0_CSRRS:	ALUOut = A | B;
+			`kSAIL_MICROARCHITECTURE_ALUCTL_3to0_CSRRS:	ALUOut = A | B;
 
 			/*
 			 *	CSRRC only
 			 */
-//			`kSAIL_MICROARCHITECTURE_ALUCTL_3to0_CSRRC:	ALUOut = (~A) & B;
+			`kSAIL_MICROARCHITECTURE_ALUCTL_3to0_CSRRC:	ALUOut = (~A) & B;
 
 			/*
 			 *	Should never happen.
@@ -151,7 +151,7 @@ module alu(ALUctl, A, B, ALUOut, Branch_Enable);
 			// all branches make the DSP block a subtractor
 			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BLT:	Branch_Enable = ($signed(A) < $signed(B));
 			// the logic here just happens to be faster than an inferred signed >=
-			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BGE:	Branch_Enable = !((add_sub_out[31] && (A[31] || !B[31])) || (A[31] && !B[31])); //($signed(A) >= $signed(B));
+			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BGE:	Branch_Enable = !((oflow && (A[31] || !B[31])) || (A[31] && !B[31])); //($signed(A) >= $signed(B));
 			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BLTU:	Branch_Enable = ($unsigned(A) < $unsigned(B));
 			`kSAIL_MICROARCHITECTURE_ALUCTL_6to4_BGEU:	Branch_Enable = ($unsigned(A) >= $unsigned(B));
 
